@@ -1,0 +1,29 @@
+{
+  "name": "baseApp",
+  "version": "0.0.1",
+  "description": "A base application for further development",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/MrJangoBox/baseApp"
+  },
+  "author": "MrJangoBox",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrJangoBox/baseApp/issues"
+  },
+  "engines": {
+    "node": "0.10.26"
+  },
+  "homepage": "https://github.com/MrJangoBox/Clinification",
+  "dependencies": {
+    "morgan": "^1.2.3",
+    "bcrypt": "^0.8.0",
+    "restify": "^2.8.2",
+    "mongojs": "^0.14.0",
+    "forever": "^0.11.1"
+  }
+}
