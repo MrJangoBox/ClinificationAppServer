@@ -2,8 +2,8 @@ var pwdMgr = require('./managePasswords');
  
 module.exports = function (server, db) {
     // unique index
-    db.appUsers.ensureIndex({
-        email: 1
+    db.patient.ensureIndex({
+        cellphone: 2
     }, {
         unique: true
     })
@@ -13,7 +13,7 @@ module.exports = function (server, db) {
         pwdMgr.cryptPassword(user.password, function (err, hash) {
             user.password = hash;
             console.log("n", hash);
-            db.appUsers.insert(user,
+            db.patient.insert(user,
                 function (err, dbUser) {
                     if (err) { // duplicate key error
                         if (err.code == 11000) /* http://www.mongodb.org/about/contributors/error-codes/*/ {
@@ -22,7 +22,7 @@ module.exports = function (server, db) {
                             });
                             res.end(JSON.stringify({
                                 error: err,
-                                message: "A user with this email already exists"
+                                message: "A user with this cellphone already exists"
                             }));
                         }
                     } else {
@@ -39,7 +39,7 @@ module.exports = function (server, db) {
  
     server.post('/api/v1/baseApp/auth/login', function (req, res, next) {
         var user = req.params;
-        if (user.email.trim().length == 0 || user.password.trim().length == 0) {
+        if (user.cellphone.trim().length == 0 || user.password.trim().length == 0) {
             res.writeHead(403, {
                 'Content-Type': 'application/json; charset=utf-8'
             });
@@ -48,8 +48,8 @@ module.exports = function (server, db) {
             }));
         }
         console.log("in");
-        db.appUsers.findOne({
-            email: req.params.email
+        db.patient.findOne({
+            cellphone: req.params.cellphone
         }, function (err, dbUser) {
  
  

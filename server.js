@@ -4,7 +4,14 @@ var morgan      =   require('morgan');
 
 // Connection to DB: 1) Internal Mongo db, 2) External MongoLab db
 //var db          =   mongojs('baseApp', ['appUsers','baseAppLists']);
-var db          =   mongojs('mongodb://admin:password@ds037990.mongolab.com:37990/clinification', ['appUsers','baseAppLists']);
+
+// Previous that worked
+//var db          =   mongojs('mongodb://admin:password@ds037990.mongolab.com:37990/clinification', ['appUsers','baseAppLists']);
+
+// Main database
+var db          =   mongojs('mongodb://clinification:admin@ds039950.mongolab.com:39950/clinimongo', ['patient','baseAppLists']);
+
+// Things to add eventually 'appointment','confirmation','doctor',
 
 var server      =   restify.createServer();
  
@@ -26,5 +33,6 @@ server.listen(process.env.PORT || 9804, function () {
 });
 
 // Js files to db collections links
-var manageUsers = require('./auth/manageUser')(server, db);
+var managePatients = require('./auth/manageUser')(server, db);
+//var managePatients = require('./auth/managePatient')(server, db);
 var manageLists =   require('./baseAppList/manageBaseAppList')(server, db);
