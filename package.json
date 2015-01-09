@@ -1,19 +1,19 @@
 {
-  "name": "baseApp",
+  "name": "clinifApp",
   "version": "0.0.1",
-  "description": "A base application for further development",
+  "description": "A Clinical application for further development",
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/MrJangoBox/baseApp"
+    "url": "git://github.com/MrJangoBox/clinifApp"
   },
   "author": "MrJangoBox",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MrJangoBox/baseApp/issues"
+    "url": "https://github.com/MrJangoBox/clinifApp/issues"
   },
   "engines": {
     "node": "0.10.26"

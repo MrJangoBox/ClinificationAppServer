@@ -1,6 +1,9 @@
 var pwdMgr = require('./managePasswords');
  
 module.exports = function (server, db) {
+    
+    var validateRequest = require("../auth/validateRequest");
+    
     // unique index
     db.patient.ensureIndex({
         cellphone: 2
@@ -8,7 +11,7 @@ module.exports = function (server, db) {
         unique: true
     })
  
-    server.post('/api/v1/baseApp/auth/register', function (req, res, next) {
+    server.post('/api/v1/clinifApp/auth/register', function (req, res, next) {
         var user = req.params;
         pwdMgr.cryptPassword(user.password, function (err, hash) {
             user.password = hash;
@@ -37,7 +40,7 @@ module.exports = function (server, db) {
         return next();
     });
  
-    server.post('/api/v1/baseApp/auth/login', function (req, res, next) {
+    server.post('/api/v1/clinifApp/auth/login', function (req, res, next) {
         var user = req.params;
         if (user.cellphone.trim().length == 0 || user.password.trim().length == 0) {
             res.writeHead(403, {
@@ -71,6 +74,20 @@ module.exports = function (server, db) {
                     }));
                 }
  
+            });
+        });
+        return next();
+    });
+    
+    server.get('/api/v1/clinifApp/auth/profile', function (req, res, next) {
+        validateRequest.validate(req, res, db, function () {
+            db.patient.findOne({
+                cellphone: req.params.token
+            }, function (err, profile) {
+                res.writeHead(200, {
+                    'Content-Type': 'application/json; charset=utf-8'
+                });
+                res.end(JSON.stringify(profile));
             });
         });
         return next();

@@ -1,9 +1,9 @@
 module.exports = function (server, db) {
     var validateRequest = require("../auth/validateRequest");
  
-    server.get("/api/v1/baseApp/data/list", function (req, res, next) {
+    server.get("/api/v1/clinifApp/data/list", function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.baseAppLists.find({
+            db.clinifAppLists.find({
                 user : req.params.token
             },function (err, list) {
                 res.writeHead(200, {
@@ -15,9 +15,9 @@ module.exports = function (server, db) {
         return next();
     });
  
-    server.get('/api/v1/baseApp/data/item/:id', function (req, res, next) {
+    server.get('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.baseAppLists.find({
+            db.clinifAppLists.find({
                 _id: db.ObjectId(req.params.id)
             }, function (err, data) {
                 res.writeHead(200, {
@@ -29,10 +29,10 @@ module.exports = function (server, db) {
         return next();
     });
  
-    server.post('/api/v1/baseApp/data/item', function (req, res, next) {
+    server.post('/api/v1/clinifApp/data/item', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
             var item = req.params;
-            db.baseAppLists.save(item,
+            db.clinifAppLists.save(item,
                 function (err, data) {
                     res.writeHead(200, {
                         'Content-Type': 'application/json; charset=utf-8'
@@ -43,9 +43,9 @@ module.exports = function (server, db) {
         return next();
     });
  
-    server.put('/api/v1/baseApp/data/item/:id', function (req, res, next) {
+    server.put('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.baseAppLists.findOne({
+            db.clinifAppLists.findOne({
                 _id: db.ObjectId(req.params.id)
             }, function (err, data) {
                 // merge req.params/product with the server/product
@@ -59,7 +59,7 @@ module.exports = function (server, db) {
                     if (n != "id")
                         updProd[n] = req.params[n];
                 }
-                db.baseAppLists.update({
+                db.clinifAppLists.update({
                     _id: db.ObjectId(req.params.id)
                 }, updProd, {
                     multi: false
@@ -74,9 +74,9 @@ module.exports = function (server, db) {
         return next();
     });
  
-    server.del('/api/v1/baseApp/data/item/:id', function (req, res, next) {
+    server.del('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.baseAppLists.remove({
+            db.clinifAppLists.remove({
                 _id: db.ObjectId(req.params.id)
             }, function (err, data) {
                 res.writeHead(200, {

@@ -3,13 +3,15 @@ var mongojs     =   require('mongojs');
 var morgan      =   require('morgan');
 
 // Connection to DB: 1) Internal Mongo db, 2) External MongoLab db
-//var db          =   mongojs('baseApp', ['appUsers','baseAppLists']);
+// Connection to DB 1
+//var db          =   mongojs('clinifApp', ['patient','clinifAppLists']);
 
+// Connections to DB 2
 // Previous that worked
-//var db          =   mongojs('mongodb://admin:password@ds037990.mongolab.com:37990/clinification', ['appUsers','baseAppLists']);
+//var db          =   mongojs('mongodb://admin:password@ds037990.mongolab.com:37990/clinification', ['appUsers','clinifAppLists']);
 
 // Main database
-var db          =   mongojs('mongodb://clinification:admin@ds039950.mongolab.com:39950/clinimongo', ['patient','baseAppLists']);
+var db          =   mongojs('mongodb://clinification:admin@ds039950.mongolab.com:39950/clinimongo', ['patient','clinifAppLists']);
 
 // Things to add eventually 'appointment','confirmation','doctor',
 
@@ -35,4 +37,4 @@ server.listen(process.env.PORT || 9804, function () {
 // Js files to db collections links
 var managePatients = require('./auth/manageUser')(server, db);
 //var managePatients = require('./auth/managePatient')(server, db);
-var manageLists =   require('./baseAppList/manageBaseAppList')(server, db);
+var manageLists =   require('./clinifAppList/manageClinifAppList')(server, db);
