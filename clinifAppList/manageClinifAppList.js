@@ -3,7 +3,7 @@ module.exports = function (server, db) {
  
     server.get("/api/v1/clinifApp/data/list", function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.clinifAppLists.find({
+            db.appointment.find({
                 user : req.params.token
             },function (err, list) {
                 res.writeHead(200, {
@@ -17,7 +17,7 @@ module.exports = function (server, db) {
  
     server.get('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.clinifAppLists.find({
+            db.appointment.find({
                 _id: db.ObjectId(req.params.id)
             }, function (err, data) {
                 res.writeHead(200, {
@@ -32,7 +32,7 @@ module.exports = function (server, db) {
     server.post('/api/v1/clinifApp/data/item', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
             var item = req.params;
-            db.clinifAppLists.save(item,
+            db.appointment.save(item,
                 function (err, data) {
                     res.writeHead(200, {
                         'Content-Type': 'application/json; charset=utf-8'
@@ -45,7 +45,7 @@ module.exports = function (server, db) {
  
     server.put('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.clinifAppLists.findOne({
+            db.appointment.findOne({
                 _id: db.ObjectId(req.params.id)
             }, function (err, data) {
                 // merge req.params/product with the server/product
@@ -59,7 +59,7 @@ module.exports = function (server, db) {
                     if (n != "id")
                         updProd[n] = req.params[n];
                 }
-                db.clinifAppLists.update({
+                db.appointment.update({
                     _id: db.ObjectId(req.params.id)
                 }, updProd, {
                     multi: false
@@ -76,7 +76,7 @@ module.exports = function (server, db) {
  
     server.del('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.clinifAppLists.remove({
+            db.appointment.remove({
                 _id: db.ObjectId(req.params.id)
             }, function (err, data) {
                 res.writeHead(200, {

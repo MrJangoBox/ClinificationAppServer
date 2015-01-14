@@ -5,8 +5,8 @@ module.exports = function (server, db) {
     var validateRequest = require("../auth/validateRequest");
     
     // unique index
-    db.patient.ensureIndex({
-        cellphone: 2
+    db.account.ensureIndex({
+        username: 2
     }, {
         unique: true
     })
@@ -16,7 +16,7 @@ module.exports = function (server, db) {
         pwdMgr.cryptPassword(user.password, function (err, hash) {
             user.password = hash;
             console.log("n", hash);
-            db.patient.insert(user,
+            db.account.insert(user,
                 function (err, dbUser) {
                     if (err) { // duplicate key error
                         if (err.code == 11000) /* http://www.mongodb.org/about/contributors/error-codes/*/ {
@@ -25,7 +25,7 @@ module.exports = function (server, db) {
                             });
                             res.end(JSON.stringify({
                                 error: err,
-                                message: "A user with this cellphone already exists"
+                                message: "A user with this username already exists"
                             }));
                         }
                     } else {
@@ -42,7 +42,7 @@ module.exports = function (server, db) {
  
     server.post('/api/v1/clinifApp/auth/login', function (req, res, next) {
         var user = req.params;
-        if (user.cellphone.trim().length == 0 || user.password.trim().length == 0) {
+        if (user.username.trim().length == 0 || user.password.trim().length == 0) {
             res.writeHead(403, {
                 'Content-Type': 'application/json; charset=utf-8'
             });
@@ -51,8 +51,8 @@ module.exports = function (server, db) {
             }));
         }
         console.log("in");
-        db.patient.findOne({
-            cellphone: req.params.cellphone
+        db.account.findOne({
+            username: req.params.username
         }, function (err, dbUser) {
  
  
@@ -81,8 +81,8 @@ module.exports = function (server, db) {
     
     server.get('/api/v1/clinifApp/auth/profile', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.patient.findOne({
-                cellphone: req.params.token
+            db.account.findOne({
+                username: req.params.token
             }, function (err, profile) {
                 res.writeHead(200, {
                     'Content-Type': 'application/json; charset=utf-8'
