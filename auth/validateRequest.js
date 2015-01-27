@@ -26,7 +26,7 @@ module.exports.validate = function (req, res, db, callback) {
             });
             res.end(JSON.stringify({
                 error: "You are not authorized to access this application",
-                message: "Invalid User Username"
+                message: "Invalid Username"
             }));
         } else {
             callback();

@@ -92,4 +92,98 @@ module.exports = function (server, db) {
         });
         return next();
     });
+    
+    
+    server.put('/api/v1/clinifApp/auth/updateProfile', function (req, res, next) {
+        validateRequest.validate(req, res, db, function () {
+            db.account.findOne({
+                username: req.params.token
+            }, function (err, data) {
+                pwdMgr.comparePassword(req.params.password, data.password, function (err, isPasswordMatch) {
+ 
+                    if (isPasswordMatch) {
+                        // merge req.params/product with the server/product
+ 
+                        var updProd = {}; // updated products 
+                        // logic similar to jQuery.extend(); to merge 2 objects.
+                        for (var n in data) {
+                            updProd[n] = data[n];
+                        }
+                        for (var n in req.params) {
+                            if (n != "password" && n != "token")
+                                updProd[n] = req.params[n];
+                        }
+                        db.account.update({
+        //                    _id: db.ObjectId(req.params.id)
+                            username: req.params.token
+                        }, updProd, {
+                            multi: false
+                        }, function (err, data) {
+                            res.writeHead(200, {
+                                'Content-Type': 'application/json; charset=utf-8'
+                            });
+                            res.end(JSON.stringify(data));
+                        });
+                        // remove password hash before sending to the client
+                        data.password = "";
+                    } else {
+                        res.writeHead(403, {
+                            'Content-Type': 'application/json; charset=utf-8'
+                        });
+                        res.end(JSON.stringify({
+                            error: "Invalid User"
+                        }));
+                    }
+
+                });
+            });
+        });
+        return next();
+    });
+    
+    server.post('/api/v1/clinifApp/data/item', function (req, res, next) {
+        validateRequest.validate(req, res, db, function () {
+            var item = req.params;
+            db.appointment.save(item,
+                function (err, data) {
+                    res.writeHead(200, {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    });
+                    res.end(JSON.stringify(data));
+                });
+        });
+        return next();
+    });
+ 
+    server.put('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
+        validateRequest.validate(req, res, db, function () {
+            db.appointment.findOne({
+                _id: db.ObjectId(req.params.id)
+            }, function (err, data) {
+                // merge req.params/product with the server/product
+ 
+                var updProd = {}; // updated products 
+                // logic similar to jQuery.extend(); to merge 2 objects.
+                for (var n in data) {
+                    updProd[n] = data[n];
+                }
+                for (var n in req.params) {
+                    if (n != "id")
+                        updProd[n] = req.params[n];
+                }
+                db.appointment.update({
+                    _id: db.ObjectId(req.params.id)
+                }, updProd, {
+                    multi: false
+                }, function (err, data) {
+                    res.writeHead(200, {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    });
+                    res.end(JSON.stringify(data));
+                });
+            });
+        });
+        return next();
+    });
+    
 };
