@@ -93,7 +93,6 @@ module.exports = function (server, db) {
         return next();
     });
     
-    
     server.put('/api/v1/clinifApp/auth/updateProfile', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
             db.account.findOne({
@@ -136,6 +135,52 @@ module.exports = function (server, db) {
                     }
 
                 });
+            });
+        });
+        return next();
+    });
+    
+    server.get('/api/v1/clinifApp/auth/contact', function (req, res, next) {
+        validateRequest.validate(req, res, db, function () {
+            db.account.findOne({
+                username: req.params.token
+            }, function (err, contact) {
+                res.writeHead(200, {
+                    'Content-Type': 'application/json; charset=utf-8'
+                });
+                res.end(JSON.stringify(contact));
+            });
+        });
+        return next();
+    });
+    
+    server.put('/api/v1/clinifApp/auth/updateContact', function (req, res, next) {
+        validateRequest.validate(req, res, db, function () {
+            db.account.findOne({
+                username: req.params.token
+            }, function (err, data) {
+                
+                var updProd = {}; // updated products 
+                // logic similar to jQuery.extend(); to merge 2 objects.
+                for (var n in data) {
+                    updProd[n] = data[n];
+                }
+                for (var n in req.params) {
+                    if (n != "password" && n != "token")
+                        updProd[n] = req.params[n];
+                }
+                db.account.update({
+                //    _id: db.ObjectId(req.params.id)
+                    username: req.params.token
+                }, updProd, {
+                    multi: false
+                }, function (err, data) {
+                    res.writeHead(200, {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    });
+                    res.end(JSON.stringify(data));
+                });
+                   
             });
         });
         return next();
