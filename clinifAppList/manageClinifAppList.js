@@ -1,10 +1,11 @@
 module.exports = function (server, db) {
     var validateRequest = require("../auth/validateRequest");
- 
+    
+    <!-- Find all appointment call -->
     server.get("/api/v1/clinifApp/data/list", function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
             db.appointment.find({
-                user : req.params.token
+                patient: db.ObjectId(req.params.patientId)
             },function (err, list) {
                 res.writeHead(200, {
                     'Content-Type': 'application/json; charset=utf-8'
@@ -14,24 +15,49 @@ module.exports = function (server, db) {
         });
         return next();
     });
- 
-    server.get('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
+    
+    <!-- Find Doctor Info -->
+    server.get("/api/v1/clinifApp/doctor/info", function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            db.appointment.find({
-                _id: db.ObjectId(req.params.id)
-            }, function (err, data) {
+            db.doctor.find({
+//                _id : db.ObjectId(req.params.doctorId)
+            },function (err, list) {
                 res.writeHead(200, {
                     'Content-Type': 'application/json; charset=utf-8'
                 });
-                res.end(JSON.stringify(data));
+                res.end(JSON.stringify(list));
             });
         });
         return next();
     });
- 
+    
+//    <!-- Find one appointment by id call -->
+//    server.get('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
+//        validateRequest.validate(req, res, db, function () {
+//            db.appointment.find({
+//                _id: db.ObjectId(req.params.id)
+//            }, function (err, data) {
+//                res.writeHead(200, {
+//                    'Content-Type': 'application/json; charset=utf-8'
+//                });
+//                res.end(JSON.stringify(data));
+//            });
+//        });
+//        return next();
+//    });
+    
+    <!-- Store appointment call -->
     server.post('/api/v1/clinifApp/data/item', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
-            var item = req.params;
+//            var item = req.params;
+            var item = {
+                item: req.params.item,
+                isCompleted: req.params.isCompleted,
+                user: req.params.user,
+                account: db.ObjectId(req.params.account),
+                createdAt: new Date(req.params.created),
+                updatedAt: new Date(req.params.created)
+            };
             db.appointment.save(item,
                 function (err, data) {
                     res.writeHead(200, {
@@ -42,7 +68,8 @@ module.exports = function (server, db) {
         });
         return next();
     });
- 
+
+    <!-- Modify appointment call -->
     server.put('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
             db.appointment.findOne({
@@ -73,7 +100,8 @@ module.exports = function (server, db) {
         });
         return next();
     });
- 
+    
+    <!-- Delete appointment call -->
     server.del('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
         validateRequest.validate(req, res, db, function () {
             db.appointment.remove({

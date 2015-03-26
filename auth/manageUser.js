@@ -10,8 +10,32 @@ module.exports = function (server, db) {
     }, {
         unique: true
     })
- 
-    server.post('/api/v1/clinifApp/auth/register', function (req, res, next) {
+    
+    server.post('/api/v1/clinifApp/auth/registerPatient', function (req, res, next) {
+        var user = req.params;
+            db.patient.insert(user,
+            function (err, dbUser) {
+                if (err) { // duplicate key error
+                    if (err.code == 11000) /* http://www.mongodb.org/about/contributors/error-codes/*/ {
+                        res.writeHead(400, {
+                            'Content-Type': 'application/json; charset=utf-8'
+                        });
+                        res.end(JSON.stringify({
+                            error: err,
+                            message: "A user with this username already exists"
+                        }));
+                    }
+                } else {
+                    res.writeHead(200, {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    });
+                    res.end(JSON.stringify(dbUser));
+                }
+            });
+        return next();
+    });
+    
+    server.post('/api/v1/clinifApp/auth/registerAccount', function (req, res, next) {
         var user = req.params;
         pwdMgr.cryptPassword(user.password, function (err, hash) {
             user.password = hash;
@@ -36,6 +60,21 @@ module.exports = function (server, db) {
                         res.end(JSON.stringify(dbUser));
                     }
                 });
+        });
+        return next();
+    });
+    
+    <!-- Find Patient Info -->
+    server.get("/api/v1/clinifApp/account/info", function (req, res, next) {
+        validateRequest.validate(req, res, db, function () {
+            db.account.findOne({
+                username : req.params.token
+            },function (err, list) {
+                res.writeHead(200, {
+                    'Content-Type': 'application/json; charset=utf-8'
+                });
+                res.end(JSON.stringify(list));
+            });
         });
         return next();
     });
@@ -181,51 +220,6 @@ module.exports = function (server, db) {
                     res.end(JSON.stringify(data));
                 });
                    
-            });
-        });
-        return next();
-    });
-    
-    server.post('/api/v1/clinifApp/data/item', function (req, res, next) {
-        validateRequest.validate(req, res, db, function () {
-            var item = req.params;
-            db.appointment.save(item,
-                function (err, data) {
-                    res.writeHead(200, {
-                        'Content-Type': 'application/json; charset=utf-8'
-                    });
-                    res.end(JSON.stringify(data));
-                });
-        });
-        return next();
-    });
- 
-    server.put('/api/v1/clinifApp/data/item/:id', function (req, res, next) {
-        validateRequest.validate(req, res, db, function () {
-            db.appointment.findOne({
-                _id: db.ObjectId(req.params.id)
-            }, function (err, data) {
-                // merge req.params/product with the server/product
- 
-                var updProd = {}; // updated products 
-                // logic similar to jQuery.extend(); to merge 2 objects.
-                for (var n in data) {
-                    updProd[n] = data[n];
-                }
-                for (var n in req.params) {
-                    if (n != "id")
-                        updProd[n] = req.params[n];
-                }
-                db.appointment.update({
-                    _id: db.ObjectId(req.params.id)
-                }, updProd, {
-                    multi: false
-                }, function (err, data) {
-                    res.writeHead(200, {
-                        'Content-Type': 'application/json; charset=utf-8'
-                    });
-                    res.end(JSON.stringify(data));
-                });
             });
         });
         return next();

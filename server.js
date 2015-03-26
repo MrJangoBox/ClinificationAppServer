@@ -11,7 +11,7 @@ var morgan      =   require('morgan');
 //var db          =   mongojs('mongodb://admin:password@ds037990.mongolab.com:37990/clinification', ['appUsers','clinifAppLists']);
 
 // Main database
-var db          =   mongojs('mongodb://clinification:admin@ds039950.mongolab.com:39950/clinimongo', ['account','appointment']);
+var db          =   mongojs('mongodb://clinification:admin@ds039950.mongolab.com:39950/clinimongo', ['account','patient','appointment','doctor']);
 
 // Things to add eventually 'appointment','confirmation','doctor',
 
