@@ -52,7 +52,7 @@ module.exports = function (server, db) {
 //            var item = req.params;
             var item = {
                 item: req.params.item,
-                isCompleted: req.params.isCompleted,
+                status: req.params.status,
                 user: req.params.user,
                 account: db.ObjectId(req.params.account),
                 createdAt: new Date(req.params.created),
